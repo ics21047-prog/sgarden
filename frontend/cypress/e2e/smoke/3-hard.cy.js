@@ -70,8 +70,9 @@ describe('M20: CSV/JSON Data Import (200 pts)', () => {
     cy.get('[data-testid="import-file-input"]').should('exist');
   });
 
-  it('import-commit-button exists on import-page', () => {
+  it('import-submit and import-cancel exist on import-page', () => {
     cy.get('[data-testid="sidebar-import-link"]').click();
-    cy.get('[data-testid="import-commit-button"]').should('exist');
+    cy.get('[data-testid="import-submit"]').should('exist');
+    cy.get('[data-testid="import-cancel"]').should('exist');
   });
 });

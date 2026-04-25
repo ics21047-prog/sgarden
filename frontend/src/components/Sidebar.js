@@ -19,11 +19,11 @@ const useStyles = makeStyles((theme) => ({
 	},
 }));
 
-const ButtonWithText = ({ text, icon, more, handler }) => (
+const ButtonWithText = ({ text, icon, more, handler, dataTestId }) => (
 	<span key={text}>
 		{!more
 		&& (
-			<Button key={text} sx={{ width: "100%", display: "flex", flexDirection: "row", justifyContent: "flex-start", padding: "8px 40px 8px 16px" }} onClick={(event) => handler(event)}>
+			<Button data-testid={dataTestId} key={text} sx={{ width: "100%", display: "flex", flexDirection: "row", justifyContent: "flex-start", padding: "8px 40px 8px 16px" }} onClick={(event) => handler(event)}>
 				{icon && (<Image src={icon} alt={text} fit="contain" width="25px" />)}
 				<Typography align="center" color="white.main" fontSize="medium" ml={1} display="flex" alignItems="center" sx={{ textTransform: "capitalize" }}>
 					{text}
@@ -60,8 +60,8 @@ const ButtonWithText = ({ text, icon, more, handler }) => (
 	</span>
 );
 
-const ButtonSimple = ({ text, icon, handler, ind }) => (
-	<Button key={text} sx={{ minWidth: "30px!important", padding: "0px", marginTop: (ind === 0) ? "0px" : "10px" }} onClick={(event) => handler(event)}>
+const ButtonSimple = ({ text, icon, handler, ind, dataTestId }) => (
+	<Button data-testid={dataTestId} key={text} sx={{ minWidth: "30px!important", padding: "0px", marginTop: (ind === 0) ? "0px" : "10px" }} onClick={(event) => handler(event)}>
 		<Image src={icon} alt={text} fit="contain" width="30px" />
 	</Button>
 );
@@ -100,6 +100,13 @@ const Sidebar = ({ isSmall: sidebarIsSmall }) => {
 				navigate("/dashboard2");
 			},
 		},
+		{
+			text: "Import",
+			handler: () => {
+				navigate("/import");
+			},
+			dataTestId: "sidebar-import-link",
+		},
 	];
 
 	return (
@@ -111,6 +118,7 @@ const Sidebar = ({ isSmall: sidebarIsSmall }) => {
 					text={button.text}
 					handler={button.handler}
 					more={button.more}
+					dataTestId={button.dataTestId}
 				/>
 			))}
 			{isSmall && buttons.map((button, ind) => (
@@ -121,6 +129,7 @@ const Sidebar = ({ isSmall: sidebarIsSmall }) => {
 					handler={button.handler}
 					more={button.more}
 					ind={ind}
+					dataTestId={button.dataTestId}
 				/>
 			))}
 		</div>
