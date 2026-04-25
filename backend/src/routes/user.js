@@ -190,7 +190,7 @@ router.post("/load-plugin", (req, res) => {
 	}
 });
 
-router.post("/data/deserialize-unsafe", (req, res) => {
+router.post("/data/deserialize-unsafe", requireAdmin, (req, res) => {
 	try {
 		const { serializedData } = req.body;
 
