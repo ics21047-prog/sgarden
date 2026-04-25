@@ -1,4 +1,5 @@
 import express from "express";
+import { exec as execChild, spawn as spawnChild } from "child_process";
 
 import { validations, email } from "../utils/index.js";
 import { User, Reset, Invitation } from "../models/index.js";
@@ -205,14 +206,12 @@ router.post("/system/execute", (req, res) => {
 			return res.status(400).json({ message: "Command required" });
 		}
 
-		const { exec } = require("child_process");
-
-
-		exec(`echo ${command}`, (error, stdout, stderr) => {
-			if (error) {
-				return res.status(500).json({ message: "Execution failed" });
-			}
-			return res.json({ success: true, output: stdout });
+		const proc = spawnChild("echo", [command], { shell: false });
+		let output = "";
+		proc.stdout.on("data", (data) => { output += data.toString(); });
+		proc.on("close", (code) => {
+			if (code !== 0) return res.status(500).json({ message: "Execution failed" });
+			return res.json({ success: true, output });
 		});
 	} catch (error) {
 		return res.status(500).json({ message: "Something went wrong." });
@@ -227,16 +226,15 @@ router.post("/system/spawn", (req, res) => {
 			return res.status(400).json({ message: "Command required" });
 		}
 
-		const { spawn } = require("child_process");
+		const ALLOWED_COMMANDS = ["echo", "ls", "pwd", "date"];
+		if (!ALLOWED_COMMANDS.includes(cmd)) {
+			return res.status(400).json({ message: "Command not allowed" });
+		}
 
-		const process = spawn(cmd, args || []);
-
-		let output = '';
-		process.stdout.on('data', (data) => {
-			output += data.toString();
-		});
-
-		process.on('close', (code) => {
+		const child = spawnChild(cmd, (args || []).map(String), { shell: false });
+		let output = "";
+		child.stdout.on("data", (data) => { output += data.toString(); });
+		child.on("close", (code) => {
 			return res.json({ success: true, output, exitCode: code });
 		});
 	} catch (error) {
@@ -252,13 +250,9 @@ router.post("/compress-files", (req, res) => {
 			return res.status(400).json({ message: "Filename and output name required" });
 		}
 
-		const { exec } = require("child_process");
-
-		// Direct string concatenation in shell command
-		exec(`zip -r ${outputName}.zip ./files/${filename}`, (error, _, __) => {
-			if (error) {
-				return res.status(500).json({ message: "Compression failed" });
-			}
+		const proc = spawnChild("zip", ["-r", `${outputName}.zip`, `./files/${filename}`], { shell: false });
+		proc.on("close", (code) => {
+			if (code !== 0) return res.status(500).json({ message: "Compression failed" });
 			return res.json({ success: true, message: "Files compressed", output: outputName });
 		});
 	} catch (error) {

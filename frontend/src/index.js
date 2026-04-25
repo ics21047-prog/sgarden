@@ -25,6 +25,7 @@ import SignUp from "./screens/SignUp.js";
 import InvitedSignUp from "./screens/InvitedSignUp.js";
 import Auth from "./screens/Auth.js";
 import Users from "./screens/Users.js";
+import Profile from "./screens/Profile.js";
 import Dashboard from "./screens/Dashboard.js";
 import Dashboard1 from "./screens/Dashboard1.js";
 import Dashboard2 from "./screens/Dashboard2.js";
@@ -82,6 +83,7 @@ const App = () => {
 								<Route path="sign-up" element={<GuestOnly c={<SignUp />} />} />
 								<Route path="register" element={<GuestOnly c={<InvitedSignUp />} />} />
 								<Route path="users" element={<AdminOnly c={<Users />} />} />
+								<Route path="profile" element={<Protected c={<Profile />} />} />
 								<Route path="dashboard" element={<Protected c={<Dashboard />} />} />
 								<Route path="dashboard1" element={<Protected c={<Dashboard1 />} />} />
 								<Route path="dashboard2" element={<Protected c={<Dashboard2 />} />} />

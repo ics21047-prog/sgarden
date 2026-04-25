@@ -207,10 +207,12 @@ router.post("/generate-custom-report", (req, res) => {
 			totalUsers: 100
 		};
 
-		const report = eval(`\`${templateString}\``);
+		const report = templateString.replace(/\{\{(\w+)\}\}/g, (_, key) =>
+			Object.prototype.hasOwnProperty.call(reportData, key) ? reportData[key] : ""
+		);
 
-		return res.json({ 
-			success: true, 
+		return res.json({
+			success: true,
 			report,
 			generatedAt: new Date()
 		});
