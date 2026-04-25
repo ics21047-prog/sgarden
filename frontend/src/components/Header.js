@@ -1,16 +1,18 @@
 import { useState, memo } from "react";
 import { styled } from "@mui/material/styles";
-import { AppBar, Toolbar, Typography, Menu, MenuItem, IconButton, Button, Paper, Breadcrumbs, Box } from "@mui/material";
+import { AppBar, Toolbar, Typography, Menu, MenuItem, IconButton, Button, Paper, Breadcrumbs, Box, Switch } from "@mui/material";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import {
 	ExpandMore,
 	MoreVert as MoreIcon,
 	AccountCircle as AccountCircleIcon,
+	WbSunny,
+	DarkMode,
 } from "@mui/icons-material";
 import { makeStyles } from "@mui/styles";
 import { Image } from "mui-image";
 
-import { jwt, capitalize } from "../utils/index.js";
+import { jwt, capitalize, useThemeStore } from "../utils/index.js";
 import logo from "../assets/images/logo.png";
 import { ReactComponent as LogoutIcon } from "../assets/images/logout.svg";
 
@@ -18,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
 	grow: {
 		flexGrow: 1,
 		flexBasis: "auto",
-		background: "white",
+		background: theme.palette.background.paper,
 		zIndex: 1200,
 		height: "70px",
 	},
@@ -26,7 +28,9 @@ const useStyles = makeStyles((theme) => ({
 		height: "30px",
 		padding: theme.spacing(0.5),
 		borderRadius: "0px",
-		background: theme.palette.grey.main,
+		background: theme.palette.mode === "dark"
+			? theme.palette.background.default
+			: theme.palette.grey.main,
 	},
 	icon: {
 		marginRight: 0.5,
@@ -95,6 +99,9 @@ const Header = ({ isAuthenticated }) => {
 	const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
 	const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
+	const isDark = useThemeStore((s) => s.isDark);
+	const toggleDark = useThemeStore((s) => s.toggleDark);
+
 	const handleMobileMenuClose = () => setMobileMoreAnchorEl(null);
 	const handleMobileMenuOpen = (event) => setMobileMoreAnchorEl(event.currentTarget);
 
@@ -152,6 +159,21 @@ const Header = ({ isAuthenticated }) => {
 						<Image src={logo} alt="Logo" sx={{ p: 0, my: 0, height: "100%", maxWidth: "200px" }} />
 					</Box>
 					<Box className={classes.grow} style={{ height: "100%" }} />
+
+					{/* Dark mode toggle — always visible */}
+					<Box sx={{ display: "flex", alignItems: "center", px: 1 }}>
+						{isDark
+							? <DarkMode data-testid="theme-indicator-dark" sx={{ color: "secondary.main", mr: 0.5 }} />
+							: <WbSunny data-testid="theme-indicator-light" sx={{ color: "secondary.main", mr: 0.5 }} />}
+						<Switch
+							data-testid="dark-mode-toggle"
+							checked={isDark}
+							onChange={toggleDark}
+							size="small"
+							color="secondary"
+						/>
+					</Box>
+
 					{isAuthenticated
 					&& (
 						<>

@@ -7,3 +7,4 @@ export { default as jwt } from "./jwt.js";
 export { default as useSnackbar, snackStore } from "./use-snackbar.js";
 export { default as validations } from "./validations.js";
 export { default as colorSuggestions } from "./color-suggestion.js";
+export { default as useThemeStore } from "./use-theme.js";
