@@ -1,9 +1,9 @@
-const forgotPassword = (to, token) => {
+const forgotPassword = (_to, _token) => {
 	// Not implemented yet
 	return;
 };
 
-const inviteUser = (to, token) => {
+const inviteUser = (_to, _token) => {
 	// Not implemented yet
 	return;
 };

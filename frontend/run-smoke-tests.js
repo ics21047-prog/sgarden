@@ -24,7 +24,6 @@ const C = {
   yellow: '\x1b[33m',
   cyan: '\x1b[36m',
   grey: '\x1b[90m',
-  dim: '\x1b[2m',
 };
 const bold = (s) => `${C.bold}${s}${C.reset}`;
 const green = (s) => `${C.green}${s}${C.reset}`;

@@ -1,19 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
-import { ComposableMap, Geographies, Geography, Annotation, Graticule, Line, ZoomableGroup, Marker } from "react-simple-maps";
-import { makeStyles } from "@mui/styles";
+import { ComposableMap, Geographies, Geography, Annotation, Graticule, Line, Marker } from "react-simple-maps";
 import { memo } from "react";
 
 import colors from "../_colors.scss";
 import { Grid } from "@mui/material";
-
-const useStyles = makeStyles(() => ({
-	accordion: {
-		width: "100%!important",
-		borderRadius: "10px!important",
-		backgroundColor: "transparent",
-		boxShadow: "none",
-	},
-}));
 
 /*
 	Projection types:
@@ -73,12 +63,16 @@ const Map = ({
 	guides = { back: false, front: true, fill: "transparent", stroke: "white", step: [20, 20] },
 	lines = [],
 	markers = [{ coordinates: [-101, 53], fill: "red" }],
-	annotations = [],
+	annotations = [{
+		subject: [2.3522, 48.8566],
+		dx: -90,
+		dy: -30,
+		text: "Paris",
+	}],
 }) => {
 	const [mapWidth, setMapWidth] = useState(0);
 	const [mapHeight, setMapHeight] = useState(0);
 	const containerRef = useRef(null);
-	const classes = useStyles();
 
 	useEffect(() => {
 		if (containerRef?.current) {
@@ -173,20 +167,23 @@ const Map = ({
 							<circle r={8} fill="#F53" />
 						</Marker>
 					))}
-					<Annotation
-						subject={[2.3522, 48.8566]}
-						dx={-90}
-						dy={-30}
-						connectorProps={{
-							stroke: "#FF5533",
-							strokeWidth: 3,
-							strokeLinecap: "round"
-						}}
-					>
-						<text x="-8" textAnchor="end" alignmentBaseline="middle" fill="#F53">
-							{"Paris"}
-						</text>
-					</Annotation>
+					{annotations.map((annotation, index) => (
+						<Annotation
+							key={`annotation-${index}`}
+							subject={annotation.subject}
+							dx={annotation.dx}
+							dy={annotation.dy}
+							connectorProps={{
+								stroke: annotation.stroke || "#FF5533",
+								strokeWidth: annotation.strokeWidth || 3,
+								strokeLinecap: "round",
+							}}
+						>
+							<text x="-8" textAnchor="end" alignmentBaseline="middle" fill={annotation.color || "#F53"}>
+								{annotation.text || ""}
+							</text>
+						</Annotation>
+					))}
 				{/* </ZoomableGroup> */}
 			</ComposableMap>
 		</Grid>
