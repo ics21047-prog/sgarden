@@ -7,7 +7,7 @@ import AccountCircle from "@mui/icons-material/AccountCircle";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
-import { useSnackbar } from "../utils/index.js";
+import { useSettingsStore, useSnackbar } from "../utils/index.js";
 import Spinner from "../components/Spinner.js";
 import background from "../assets/images/background.jpg";
 import { authenticate } from "../api/index.js";
@@ -39,6 +39,7 @@ const SignIn = () => {
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const classes = useStyles();
 	const { error } = useSnackbar();
+	const defaultDashboard = useSettingsStore((s) => s.settings.defaultDashboard);
 	const navigate = useNavigate();
 
 	const [showPassword, setShowPassword] = useState(false);
@@ -67,9 +68,9 @@ const SignIn = () => {
 
 	useEffect(() => {
 		try {
-			sessionStorage.setItem("redirectTo", JSON.stringify(state?.from || { pathname: "/dashboard" }));
+			sessionStorage.setItem("redirectTo", JSON.stringify(state?.from || { pathname: defaultDashboard }));
 		} catch { /** */ }
-	}, [state]);
+	}, [defaultDashboard, state]);
 
 	const formContent = [
 		{

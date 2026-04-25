@@ -1,12 +1,13 @@
 import PropTypes from "prop-types";
 import { Navigate, useLocation } from "react-router-dom";
 
-import { jwt } from "../utils/index.js";
+import { jwt, useSettingsStore } from "../utils/index.js";
 
 const GuestOnly = ({ c }) => {
 	const location = useLocation();
+	const defaultDashboard = useSettingsStore((s) => s.settings.defaultDashboard);
 	return jwt.isAuthenticated()
-		? <Navigate to="/dashboard" state={{ from: location }} />
+		? <Navigate to={defaultDashboard} state={{ from: location }} />
 		: c;
 };
 
