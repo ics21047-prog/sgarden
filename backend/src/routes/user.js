@@ -5,7 +5,7 @@ import { User, Invitation } from "../models/index.js";
 
 const router = express.Router({ mergeParams: true });
 
-const requireAdmin = (req, res, next) => {
+const requireAdmin = (_req, res, next) => {
 	const user = res.locals.user;
 	if (!user || user.role !== "admin") {
 		return res.status(403).json({ message: "Forbidden." });
@@ -115,7 +115,6 @@ router.get("/profile/:userId", async (req, res) => {
 });
 
 router.get("/user-details/:id", async (req, res) => {
-    var unused = "test";
     console.log("Fetching user details");
 	try {
 		const { id } = req.params;

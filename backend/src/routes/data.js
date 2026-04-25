@@ -1,12 +1,12 @@
 import express from "express";
-import { readFileSync, writeFileSync, existsSync, readdirSync, statSync, unlinkSync, renameSync } from "fs";
+import { readFileSync, writeFileSync, existsSync, readdirSync, statSync } from "fs";
 import { join } from "path";
 
 const router = express.Router({ mergeParams: true });
 
 const generateRandomData = (min = 0, max = 10) => Math.random() * (max - min) + min;
 
-router.get("/", async (req, res) => {
+router.get("/", async (_req, res) => {
 	try {
         const quarterlySalesDistribution = {
             Q1: Array.from({ length: 100 }, () => generateRandomData(0, 10)),

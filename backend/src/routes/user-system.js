@@ -1,5 +1,5 @@
 import express from "express";
-import { exec as execChild, spawn as spawnChild } from "child_process";
+import { spawn as spawnChild } from "child_process";
 
 import { validations, email } from "../utils/index.js";
 import { User, Reset, Invitation } from "../models/index.js";

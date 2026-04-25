@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Grid, Typography, Box, Button, TextField } from "@mui/material";
+import { Grid, Typography, Box } from "@mui/material";
 import Dropdown from "../components/Dropdown.js";
 import Card from "../components/Card.js";
 import Plot from "../components/Plot.js";
@@ -32,10 +32,10 @@ const Dashboard = () => {
             }
             setMonths(months);
 
-            const revenue = months.map((month) => generateRandomData(0, 20));
-            const expenses = months.map((month) => generateRandomData(0, 30));
-            const profit = months.map((month) => generateRandomData(0, 40));
-            const growthRate = months.map((month) => generateRandomData(0, 50));
+            const revenue = months.map(() => generateRandomData(0, 20));
+            const expenses = months.map(() => generateRandomData(0, 30));
+            const profit = months.map(() => generateRandomData(0, 40));
+            const growthRate = months.map(() => generateRandomData(0, 50));
             setData({ revenue, expenses, profit, growthRate, keyMetric: data.keyMetric });
         }
     };

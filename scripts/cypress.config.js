@@ -15,7 +15,7 @@ module.exports = defineConfig({
     video: false,
     screenshotOnRunFailure: false,
     // Suppress Cypress's own test-level output; summary comes from run-smoke-tests.cjs
-    setupNodeEvents(on, _config) {
+    setupNodeEvents(_on, _config) {
       // No-op: summary printing is handled by the run script
       return _config;
     },

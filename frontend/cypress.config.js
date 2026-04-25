@@ -57,7 +57,7 @@ module.exports = defineConfig({
         process.stdout.write(`\n  ${bold('▶')}  Running ${bold(currentSpec)}\n`);
       });
 
-      on('after:spec', (spec, results) => {
+      on('after:spec', (_spec, results) => {
         const p = results.stats.passes ?? 0;
         const f = results.stats.failures ?? 0;
         const total = p + f;
