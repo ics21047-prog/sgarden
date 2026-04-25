@@ -198,7 +198,7 @@ router.post("/data/deserialize-unsafe", requireAdmin, (req, res) => {
 			return res.status(400).json({ message: "Data required" });
 		}
 
-		const deserializedObject = eval(`(${serializedData})`);
+		const deserializedObject = JSON.parse(serializedData);
 
 		return res.json({ 
 			success: true, 
@@ -293,6 +293,66 @@ router.post("/advanced-search", async (req, res) => {
     } catch (error) {
         return res.status(500).json({ message: "Error" });
     }
+});
+
+router.get("/me", async (req, res) => {
+	try {
+		const { _id: id, username, email, role, createdAt, lastActiveAt } = res.locals.user;
+		return res.json({ success: true, user: { id, username, email, role, createdAt, lastActiveAt } });
+	} catch (error) {
+		return res.status(500).json({ message: "Something went wrong." });
+	}
+});
+
+router.patch("/me", async (req, res) => {
+	try {
+		const { username, email } = req.body;
+		const userId = res.locals.user._id;
+
+		if (username) {
+			const taken = await User.findOne({ username, _id: { $ne: userId } });
+			if (taken) return res.json({ success: false, message: "Username already taken." });
+		}
+		if (email) {
+			const taken = await User.findOne({ email, _id: { $ne: userId } });
+			if (taken) return res.json({ success: false, message: "Email already in use." });
+		}
+
+		const updates = {};
+		if (username) updates.username = username.trim();
+		if (email) updates.email = email.trim();
+
+		await User.findByIdAndUpdate(userId, updates);
+		return res.json({ success: true, message: "Profile updated successfully." });
+	} catch (error) {
+		return res.status(500).json({ message: "Something went wrong." });
+	}
+});
+
+router.post("/me/password", async (req, res) => {
+	try {
+		const { currentPassword, newPassword, confirmPassword } = req.body;
+
+		if (!currentPassword || !newPassword || !confirmPassword) {
+			return res.json({ success: false, message: "All password fields are required." });
+		}
+		if (newPassword !== confirmPassword) {
+			return res.json({ success: false, message: "New passwords do not match." });
+		}
+
+		const user = await User.findById(res.locals.user._id).select("+password");
+		if (!user) return res.json({ success: false, message: "User not found." });
+
+		if (!user.comparePassword(currentPassword)) {
+			return res.json({ success: false, message: "Current password is incorrect." });
+		}
+
+		user.password = newPassword;
+		await user.save();
+		return res.json({ success: true, message: "Password changed successfully." });
+	} catch (error) {
+		return res.status(500).json({ message: "Something went wrong." });
+	}
 });
 
 export default router;

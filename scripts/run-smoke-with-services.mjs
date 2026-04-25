@@ -88,12 +88,15 @@ const spawned = [];
 
 function startService(service) {
   log(yellow(`  ⚡  Starting ${service.name} (npm run ${service.script})…`));
-  const child = spawn(npmCmd, ['run', service.script], {
+  const [cmd, cmdArgs] = isWindows
+    ? ['cmd.exe', ['/c', npmCmd, 'run', service.script]]
+    : [npmCmd, ['run', service.script]];
+  const child = spawn(cmd, cmdArgs, {
     cwd:      ROOT,
     detached: true,
     stdio:    'ignore',
     env:      { ...process.env, ...service.env },
-    shell:    isWindows,
+    shell:    false,
     ...(isWindows && { windowsHide: true }),
   });
   child.unref();
@@ -158,11 +161,14 @@ log(grey('  All services ready — launching smoke tests…'));
 log('');
 
 // Run the smoke test script, inheriting stdio so output is visible
-const smoke = spawn(npmCmd, ['run', 'smoke:test'], {
+const [smokeCmd, smokeArgs] = isWindows
+  ? ['cmd.exe', ['/c', npmCmd, 'run', 'smoke:test']]
+  : [npmCmd, ['run', 'smoke:test']];
+const smoke = spawn(smokeCmd, smokeArgs, {
   cwd:   ROOT,
   stdio: [process.stdin, process.stdout, process.stderr],
   env:   process.env,
-  shell: isWindows,
+  shell: false,
 });
 
 smoke.on('error', (err) => {
