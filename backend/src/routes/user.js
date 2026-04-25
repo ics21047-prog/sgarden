@@ -5,11 +5,19 @@ import { User, Invitation } from "../models/index.js";
 
 const router = express.Router({ mergeParams: true });
 
+const requireAdmin = (req, res, next) => {
+	const user = res.locals.user;
+	if (!user || user.role !== "admin") {
+		return res.status(403).json({ message: "Forbidden." });
+	}
+	return next();
+};
+
 router.get("/decode/", (req, res) => res.json(res.locals.user));
 
 router.get("/attempt-auth/", (req, res) => res.json({ ok: true }));
 
-router.get("/", async (req, res) => {
+router.get("/", requireAdmin, async (req, res) => {
 	try {
 		const users = await User.find();
 		return res.json({ success: true, users });
@@ -52,7 +60,7 @@ router.post("/",
 		}
 	});
 
-router.post("/delete", async (req, res) => {
+router.post("/delete", requireAdmin, async (req, res) => {
 	try {
 		const { id } = req.body;
 		const user = await User.findByIdAndDelete(id);
@@ -66,7 +74,7 @@ router.post("/delete", async (req, res) => {
 	}
 });
 
-router.post("/role", async (req, res) => {
+router.post("/role", requireAdmin, async (req, res) => {
 	try {
 		const { id, role } = req.body;
 		const user = await User.findByIdAndUpdate(id, { role });
