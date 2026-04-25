@@ -5,11 +5,12 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import Input from "../components/Input.js";
 import Spinner from "../components/Spinner.js";
 import { SecondaryBackgroundButton, SecondaryBorderButton } from "../components/Buttons.js";
-import { useSnackbar, dayjs } from "../utils/index.js";
+import { useSettingsStore, useSnackbar, dayjs } from "../utils/index.js";
 import { getMyProfile, updateMyProfile, changeMyPassword } from "../api/index.js";
 
 const Profile = () => {
 	const { success: showSuccess, error: showError } = useSnackbar();
+	const dateFormat = useSettingsStore((s) => s.settings.dateFormat);
 	const [isLoading, setIsLoading] = useState(false);
 	const [editMode, setEditMode] = useState(false);
 
@@ -183,14 +184,14 @@ const Profile = () => {
 									<Grid item xs={12} sm={4}>
 										<Typography variant="caption" color="text.secondary">Member since</Typography>
 										<Typography fontWeight="bold" data-testid="profile-created-at">
-											{profile.createdAt ? dayjs(profile.createdAt).format("DD/MM/YYYY") : "—"}
+											{profile.createdAt ? dayjs(profile.createdAt).format(dateFormat) : "—"}
 										</Typography>
 									</Grid>
 									<Grid item xs={12} sm={4}>
 										<Typography variant="caption" color="text.secondary">Last active</Typography>
 										<Typography fontWeight="bold" data-testid="profile-last-active">
 											{profile.lastActiveAt
-												? dayjs(profile.lastActiveAt).format("DD/MM/YYYY HH:mm")
+												? dayjs(profile.lastActiveAt).format(`${dateFormat} HH:mm`)
 												: "—"}
 										</Typography>
 									</Grid>

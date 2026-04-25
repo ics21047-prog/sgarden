@@ -4,7 +4,7 @@ import { makeStyles } from "@mui/styles";
 import { Navigate, useLocation } from "react-router-dom";
 import queryString from "query-string";
 
-import { jwt } from "../utils/index.js";
+import { jwt, useSettingsStore } from "../utils/index.js";
 
 import Sidebar from "./Sidebar.js";
 
@@ -32,16 +32,17 @@ const maybeSetToken = (Component) => (props) => {
 };
 
 const AdminOnly = ({ c }) => {
-	const [isSmall, setIsSmall] = useState(window.innerWidth < 900);
+	const sidebarCollapsed = useSettingsStore((s) => s.settings.sidebarCollapsed);
+	const [isSmall, setIsSmall] = useState(window.innerWidth < 900 || sidebarCollapsed);
 	const location = useLocation();
 	const classes = useStyles();
 
 	useEffect(() => {
-		const onResize = () => setIsSmall(window.innerWidth < 900);
+		const onResize = () => setIsSmall(window.innerWidth < 900 || sidebarCollapsed);
 		window.addEventListener("resize", onResize);
 
 		return () => window.removeEventListener("resize", onResize);
-	}, []);
+	}, [sidebarCollapsed]);
 
 	return (jwt.isAuthenticated() && jwt.isAdmin())
 		? (

@@ -6,10 +6,9 @@ import { NavigateBefore, NavigateNext, Search } from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
-import { shallow } from "zustand/shallow";
 
 import { isFuzzyMatch } from "../utils/index.js";
-import useGlobalState from "../use-global-state.js";
+import useSettingsStore from "../utils/use-settings.js";
 
 const useStyles = makeStyles((theme) => ({
 	paginationButton: {
@@ -44,10 +43,8 @@ const Table = (props) => {
 		showPageSizeOptions = true,
 		...otherProps
 	} = props;
-	const { defaultPageSize, setDefaultPageSize } = useGlobalState((e) => ({
-		defaultPageSize: e.defaultPageSize,
-		setDefaultPageSize: e.setDefaultPageSize,
-	}), shallow);
+	const settings = useSettingsStore((s) => s.settings);
+	const updateSetting = useSettingsStore((s) => s.updateSetting);
 	const classes = useStyles();
 	const theme = useTheme();
 
@@ -100,7 +97,11 @@ const Table = (props) => {
 				value={pageSize}
 				inputProps={{ className: classes.input }}
 				IconComponent={() => null}
-				onChange={(e) => { setDefaultPageSize(Number(e.target.value)); onPageSizeChange(Number(e.target.value)); }}
+				onChange={(e) => {
+					const nextPageSize = Number(e.target.value);
+					updateSetting("pageSize", nextPageSize);
+					onPageSizeChange(nextPageSize);
+				}}
 			>
 				{pageSizeOptions.map((option, i) => (
 					<MenuItem key={i} value={option}>
@@ -109,7 +110,7 @@ const Table = (props) => {
 				))}
 			</Select>
 		</FormControl>
-	), [classes.formControl, classes.input, setDefaultPageSize]);
+	), [classes.formControl, classes.input, updateSetting]);
 
 	return (
 		<ReactTable
@@ -120,7 +121,7 @@ const Table = (props) => {
 			columns={columns}
 			defaultSorted={defaultSorted}
 			defaultFilterMethod={defaultFilterMethod}
-			defaultPageSize={customPageSize || defaultPageSize}
+			defaultPageSize={customPageSize || settings.pageSize}
 			FilterComponent={FilterComponent}
 			minRows={5}
 			className={clsx("-striped -highlight -noborder", className)}

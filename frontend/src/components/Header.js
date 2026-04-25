@@ -6,6 +6,7 @@ import {
 	ExpandMore,
 	MoreVert as MoreIcon,
 	AccountCircle as AccountCircleIcon,
+	Settings as SettingsIcon,
 	WbSunny,
 	DarkMode,
 } from "@mui/icons-material";
@@ -113,6 +114,12 @@ const Header = ({ isAuthenticated }) => {
 			text: "Profile",
 			handler: () => navigate("/profile"),
 			dataTestId: "profile-nav-link",
+		},
+		{
+			icon: <SettingsIcon sx={{ color: "secondary.main", width: "100%", height: "100%" }} />,
+			text: "Settings",
+			handler: () => navigate("/settings"),
+			dataTestId: "settings-nav-link",
 		},
 		{
 			icon: <LogoutIcon className={classes.svgIcon} />,
