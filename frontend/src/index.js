@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import ReactDOM from "react-dom/client";
 import { Route, Routes, BrowserRouter as Router, useLocation } from "react-router-dom";
 import { StyledEngineProvider, ThemeProvider, createTheme } from "@mui/material/styles";
@@ -29,11 +29,12 @@ import Profile from "./screens/Profile.js";
 import Dashboard from "./screens/Dashboard.js";
 import Dashboard1 from "./screens/Dashboard1.js";
 import Dashboard2 from "./screens/Dashboard2.js";
-import { adjustColors, jwt, colorSuggestions } from "./utils/index.js";
+import { adjustColors, jwt, colorSuggestions, useThemeStore } from "./utils/index.js";
 import Map from "./components/Map.js";
 
-const theme = createTheme({
+const buildTheme = (isDark) => createTheme({
 	palette: {
+		mode: isDark ? "dark" : "light",
 		primary: { main: colors.primary },
 		secondary: { main: colors.secondary || colorSuggestions.secondary },
 		third: { main: colors.third || colorSuggestions.third },
@@ -56,12 +57,22 @@ const theme = createTheme({
 		greyDark: { main: colors.greyDark },
 		green: { main: colors.green },
 		white: { main: "#ffffff" },
+
+		...(isDark && {
+			background: {
+				default: "#1a1d2e",
+				paper: "#242739",
+			},
+		}),
 	},
 });
 
 const App = () => {
 	const location = useLocation();
 	const [authenticated, setAuthenticated] = useState(false);
+	const isDark = useThemeStore((s) => s.isDark);
+
+	const theme = useMemo(() => buildTheme(isDark), [isDark]);
 
 	useEffect(() => {
 		setAuthenticated(jwt.isAuthenticated());
@@ -91,7 +102,7 @@ const App = () => {
 								<Route path="*" element={<NotFound />} />
 							</Routes>
 						</main>
-						{authenticated && <Footer /> }
+						{authenticated && <Footer />}
 						<Snackbar />
 					</LocalizationProvider>
 				</ErrorBoundary>

@@ -286,9 +286,16 @@ router.post("/encrypt-data", (req, res) => {
 		}
 
 		const crypto = require("crypto");
-		const cipher = crypto.createCipher('des', password);
-		let encrypted = cipher.update(data, 'utf8', 'hex');
-		encrypted += cipher.final('hex');
+
+		const salt = crypto.randomBytes(16);
+		const key = crypto.pbkdf2Sync(password, salt, 100000, 32, "sha256");
+		const iv = crypto.randomBytes(12);
+
+		const cipher = crypto.createCipheriv("aes-256-gcm", key, iv);
+		const ciphertext = Buffer.concat([cipher.update(data, "utf8"), cipher.final()]);
+		const authTag = cipher.getAuthTag();
+
+		const encrypted = Buffer.concat([salt, iv, authTag, ciphertext]).toString("base64");
 
 		return res.json({ success: true, encrypted });
 	} catch (error) {
